@@ -1,5 +1,6 @@
 <% if @players %>
 	<a href="/signout">Sign out</a>
+	<h3>You are now logged in, <%=@user.username%></h3>
 	<form action="/match" method="post">
 	<label for="player-select">Challenge another user</label>
 		<select id="player-select" name="id">
@@ -9,4 +10,9 @@
 		</select>
 		<input type="submit" text="submit">
 	</form>
+
+<% else %>
+<a href="/signin">Sign in</a>
+<a href="/signup">Sign up</a>
+<p>You are currently not logged in</p>
 <% end %>

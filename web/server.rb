@@ -23,9 +23,9 @@ class RPS::Server < Sinatra::Application
     if session['rps_session']
       sesh = RPS::Session.find_by(session_id: session['rps_session'])
       @user = sesh.user
+      @players = RPS::User.where.not(username: @user.username)
     end
 
-    @players = RPS::User.where.not(username: @user.username)
 
     erb :rps
   end
