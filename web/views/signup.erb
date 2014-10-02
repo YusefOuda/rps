@@ -1,0 +1,13 @@
+<form action="/signup" method="post">
+	<label for="username">Username:</label>
+	<input name="username" type="text">
+	<label for="password">Password:</label>
+	<input name="password" type="password">
+	<label for="password-confirm">Confirm Password:</label>
+	<input name="password-confirm" type="password">
+	<input type="submit" class="btn btn-success">
+</form>
+
+<% if flash %>
+<%=flash[:alert]%>
+<% end %>

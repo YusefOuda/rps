@@ -1,0 +1,12 @@
+<% if @players %>
+	<a href="/signout">Sign out</a>
+	<form action="/match" method="post">
+	<label for="player-select">Challenge another user</label>
+		<select id="player-select" name="id">
+			<% @players.each do |p| %>
+			<option value="<%="#{p.id}"%>"><%="#{p.username}"%></option>
+			<% end %>
+		</select>
+		<input type="submit" text="submit">
+	</form>
+<% end %>
