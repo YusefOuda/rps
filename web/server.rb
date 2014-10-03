@@ -25,8 +25,6 @@ class RPS::Server < Sinatra::Application
       @user = sesh.user
       @players = RPS::User.where.not(username: @user.username)
     end
-
-
     erb :rps
   end
 
@@ -42,23 +40,19 @@ class RPS::Server < Sinatra::Application
   end
 
   post '/signin' do
-    if params['username'].empty? || params['password'].empty?
-      flash[:alert] = "Please fill in the required fields"
-      redirect to '/signin'
-    else
-      user = RPS::User.find_by(username: params['username'])
-      if user && user.has_password?(params['password'])
-        user_session = user.sessions.new
-        user_session.generate_id
-        user_session.save
+    result = RPS::SigninUser.run(params)
 
-        session['rps_session'] = user_session.session_id
-        redirect to '/rps'
-      else
-        flash[:alert] = "Either the password or username was incorrect"
-        redirect to '/signin'
-      end
+    if !result[:success]
+      flash[:alert] = result[:error]
+      redirect to '/signin'
     end
+
+    session_result = RPS::CreateSession.run(result)
+    if !session_result[:success]
+      flash[:alert] = session_result[:error]
+    end
+    session['rps_session'] = session_result[:session_id]
+    redirect to '/rps'
   end
 
   get '/signup' do
@@ -70,31 +64,19 @@ class RPS::Server < Sinatra::Application
   end
 
   post '/signup' do
-    if params['username'].empty? || params['password'].empty? || params['password-confirm'].empty?
-      flash[:alert] = "Please fill in the fields"
+    result = RPS::SignupUser.run(params)
+
+    if !result[:success]
+      flash[:alert] = result[:error]
       redirect to '/signup'
     end
-    if params['password'] == params['password-confirm']
-      pw = params['password']
-      user = params['username']
-      x = RPS::User.new
-      x.username = user
-      x.update_password(pw)
-      x.save
-      if x.id == nil
-        flash[:alert] = "Username already exists"
-        redirect to '/signup'
-      else
-        user_session = x.sessions.new
-        user_session.generate_id
-        user_session.save
-        session['rps_session'] = user_session.session_id
-        redirect to '/rps'
-      end
-    else
-      flash[:alert] = "Passwords didn't match"
-      redirect to '/signup'
+    session_result = RPS::CreateSession.run(result)
+
+    if !session_result[:success]
+      flash[:alert] = session_result[:error]
     end
+    session['rps_session'] = session_result[:session_id]
+    redirect to '/rps'
   end
 
   run! if __FILE__ == $0

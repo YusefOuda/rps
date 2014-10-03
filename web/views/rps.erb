@@ -3,7 +3,7 @@
 	<h3>You are now logged in, <%=@user.username%></h3>
 	<form action="/match" method="post">
 	<label for="player-select">Challenge another user</label>
-		<select id="player-select" name="id">
+		<select id="player-select" name="id" class="players">
 			<% @players.each do |p| %>
 			<option value="<%="#{p.id}"%>"><%="#{p.username}"%></option>
 			<% end %>
