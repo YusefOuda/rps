@@ -6,10 +6,10 @@ module RPS
       user_session.generate_id
       user_session.save
       if user_session.id.nil?
-        return {success: false, error: "could not create session"}
+        return {success?: false, error: "could not create session"}
       end
       {
-        success: true,
+        success?: true,
         session_id: user_session.session_id
       }
     end

@@ -1,11 +1,11 @@
-<% if @players %>
+<% if @users %>
 	<a href="/signout">Sign out</a>
 	<h3>You are now logged in, <%=@user.username%></h3>
-	<form action="/match" method="post">
-	<label for="player-select">Challenge another user</label>
-		<select id="player-select" name="id" class="players">
-			<% @players.each do |p| %>
-			<option value="<%="#{p.id}"%>"><%="#{p.username}"%></option>
+	<form action="/rps/match" method="get">
+		<label for="player-select">Challenge another user</label>
+		<select id="player-select" name="id" class="users">
+			<% @users.each do |u| %>
+			<option value="<%="#{u.id}"%>"><%="#{u.username}"%></option>
 			<% end %>
 		</select>
 		<input type="submit" text="submit">

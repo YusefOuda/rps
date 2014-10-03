@@ -20,12 +20,30 @@ class RPS::Server < Sinatra::Application
   end
 
   get '/rps' do
+    # this page probably needs to have a list of pending games and possibly stats
     if session['rps_session']
       sesh = RPS::Session.find_by(session_id: session['rps_session'])
       @user = sesh.user
-      @players = RPS::User.where.not(username: @user.username)
+      @users = RPS::User.where.not(username: @user.username)
     end
     erb :rps
+  end
+
+  get '/rps/match' do
+    # display match to user with 3 choices
+    id = RPS::Session.find_by(session_id: session['rps_session']).user_id
+    params['user1_id'] = id
+    result = RPS::CreateMatch.run(params)
+    binding.pry
+    erb :match
+  end
+
+  post '/rps/match' do
+    #  (create match if not already exists)
+    # check if there are 2 moves and then use transaction script
+    # i wrote to determine winner
+    # RPS::CreateMatch.run(params)
+    erb :match
   end
 
   get '/signout' do
@@ -42,13 +60,13 @@ class RPS::Server < Sinatra::Application
   post '/signin' do
     result = RPS::SigninUser.run(params)
 
-    if !result[:success]
+    if !result[:success?]
       flash[:alert] = result[:error]
       redirect to '/signin'
     end
 
     session_result = RPS::CreateSession.run(result)
-    if !session_result[:success]
+    if !session_result[:success?]
       flash[:alert] = session_result[:error]
     end
     session['rps_session'] = session_result[:session_id]
@@ -66,13 +84,13 @@ class RPS::Server < Sinatra::Application
   post '/signup' do
     result = RPS::SignupUser.run(params)
 
-    if !result[:success]
+    if !result[:success?]
       flash[:alert] = result[:error]
       redirect to '/signup'
     end
     session_result = RPS::CreateSession.run(result)
 
-    if !session_result[:success]
+    if !session_result[:success?]
       flash[:alert] = session_result[:error]
     end
     session['rps_session'] = session_result[:session_id]
