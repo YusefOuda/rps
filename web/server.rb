@@ -25,6 +25,8 @@ class RPS::Server < Sinatra::Application
       sesh = RPS::Session.find_by(session_id: session['rps_session'])
       @user = sesh.user
       @users = RPS::User.where.not(username: @user.username)
+      @challengers = @user.matches
+      binding.pry
     end
     erb :rps
   end
@@ -34,16 +36,17 @@ class RPS::Server < Sinatra::Application
     id = RPS::Session.find_by(session_id: session['rps_session']).user_id
     params['user1_id'] = id
     result = RPS::CreateMatch.run(params)
-    binding.pry
     erb :match
   end
 
   post '/rps/match' do
-    #  (create match if not already exists)
-    # check if there are 2 moves and then use transaction script
-    # i wrote to determine winner
-    # RPS::CreateMatch.run(params)
-    erb :match
+    match = RPS::Match.last
+    move = match.moves.new
+    move.user_id = match.player1_id
+    move.match_id = match.id
+    move.move = params['move']
+    move.save
+    redirect to '/rps'
   end
 
   get '/signout' do

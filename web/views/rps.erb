@@ -10,6 +10,15 @@
 		</select>
 		<input type="submit" text="submit">
 	</form>
+	<form action="/rps/pending/match" method="get">
+		<label for="player-select">Games in progress</label>
+		<select id="player-select" name="id" class="users">
+			<% @users.each do |u| %>
+			<option value="<%="#{u.id}"%>"><%="#{u.username}"%></option>
+			<% end %>
+		</select>
+		<input type="submit" text="submit">
+	</form>
 
 <% else %>
 <a href="/signin">Sign in</a>
